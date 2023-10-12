@@ -3,7 +3,6 @@ export default {
     methods: {
         openContact() {
             this.$router.push('/contact')
-
         },
     },
 }
@@ -33,10 +32,16 @@ export default {
             <div class="col-data">СОЗДАН</div>
         </div>
         <div class="contacts_row grid">
-            <div>КОНТАКТ</div>
-            <div>ТЕЛЕФОН</div>
-            <div>E-MAIL</div>
-            <div class="col-data">СОЗДАН</div>
+            <div>
+                <div class="contact_name">
+                    <div class="contact_letter">A</div>
+                    <p>Айтишник Данила</p>
+                </div>
+                
+            </div>
+            <div class="contact_phone">+7(987)654-78-09</div>
+            <div class="contact_email">nelfeelingood@gmail.com</div>
+            <div class="col-data">22.09.23</div>
         </div>
     </div>
 </template>
@@ -58,6 +63,7 @@ export default {
 .logo {
     margin-left: 3rem;
     margin-left: 1rem;
+    caret-color: transparent;
 }
 
 .navigate {
@@ -109,6 +115,7 @@ export default {
 .grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1.5fr 1fr;
+    align-items: center;
 }
 
 .contacts_title {
@@ -116,7 +123,30 @@ export default {
     font-size: 10px;
 }
 
+.contact_letter{
+    text-transform: uppercase;
+    background-color: var(--bg-yellow);
+    border-radius: 50%;
+    padding: 3px;
+    width:26px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    text-align: center;
 
+}
+
+.contact_name{
+    display: flex;
+    text-align: center;
+    gap:8px;
+}
+
+.contact_phone,
+.contact_email{
+    font-size: 12px;
+}
 
 .col-data {
     text-align: end;

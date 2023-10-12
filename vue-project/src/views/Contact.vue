@@ -1,10 +1,36 @@
 <script>
+import { mapActions } from 'vuex'
+import { ref } from 'vue'
+
+export default {
+    data: () => ({
+        formData: {
+            email: "",
+        },
+    }),
+    methods: {
+        closeContact() {
+            this.$router.push('/');
+        },
+
+        async addContact() {
+            await this.$store.dispatch("addContactAsync", {
+                email: this.formData.email
+            })
+            this.$router.push('/')
+        }       
+
+    }
+}
 
 </script>
 
 <template>
     <div class="contact_title">
-        <div>Name</div>
+        <div class="contact_title__name">Name</div>
+        <div @click="closeContact" class="btn-close">
+            <img src="../imgs/close.svg" />
+        </div>
     </div>
 
     <div class="contact_container">
@@ -20,12 +46,12 @@
         <div class="container_row">
             <p class="container_label">Телефон</p>
             <input class="container_input" type="phone" name="phone" id="phone" placeholder="Например «Андрей»..."
-                v-model="phone">
+                v-model="$store.state.phone">
         </div>
         <div class="container_row">
             <p class="container_label">E-mail</p>
-            <input class="container_input" type="email" name="email" id="name" placeholder="Например «pochta@domain.ru»..."
-                v-model="name">
+            <input class="container_input" type="email" placeholder="Например «pochta@domain.ru»..."
+                v-model="formData.email">
         </div>
         <div class="container_row">
             <p class="container_label">Категория</p>
@@ -44,9 +70,16 @@
 
         <div class="container_row">
             <div></div>
-            <button class="btn-save">
-                <img src="../imgs/save.svg" />
-                СОХРАНИТЬ</button>
+            <div class="container_buttons">
+                <button class="btn-save" @click="addContact">
+                    <img src="../imgs/save.svg" />
+                    СОХРАНИТЬ
+                </button>
+                <button class="btn-remove">
+                    <img src="../imgs/bascet.svg" />
+                    Удалить контакт
+                </button>
+            </div>
         </div>
 
     </div>
@@ -60,8 +93,23 @@
     font-size: 20px;
     height: 3rem;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     align-items: center;
+
+}
+
+.contact_title__name {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-close {
+    cursor: pointer;
+    align-items: center;
+    display: flex;
+    padding-right: 2rem;
+    caret-color: transparent;
 }
 
 .contact_container {
@@ -114,6 +162,11 @@
     color: #A9A9A9;
 }
 
+.container_buttons {
+    display: flex;
+    gap: 24px;
+}
+
 .btn-save {
     display: flex;
     padding: 12px 16px;
@@ -128,13 +181,22 @@
     color: var(--text);
     width: 136px;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
         background-color: var(--click-yellow);
     }
+
     &:active {
         background-color: var(--active-yellow);
     }
 }
 
-
+.btn-remove {
+    background-color: var(--bg-white);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    caret-color: transparent;
+    color: var(--blue);
+}
 </style>
