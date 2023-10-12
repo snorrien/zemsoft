@@ -3,56 +3,70 @@ import Home from './views/Home.vue'
 import Contact from './views/Contact.vue'
 import { createApp } from 'vue'
 import { createStore } from 'vuex'
+import { createRouter, createWebHistory } from 'vue-router'
+import App from './App.vue'
 
-// Create a new store instance.
 const store = createStore({
   state: {
     contacts: [],
-    count: 0
+    contactSaving: false,
+    contact: {}
   },
   mutations: {
     addContact(state, payload) {
-      state.contacts.push(payload);
       console.log(payload)
+      state.contacts.push(payload)
     },
-    increment(state, payload) {
-      state.count+=payload.amount;
-      console.log(state.count)
+    contactSaving(state) {
+      state.contactSaving = true
+    },
+    contactSaved(state) {
+      state.contactSaving = false
+    },
+    contactOpened(state, payload) {
+      state.contact = payload ?? {
+        name: '',
+        email: '',
+        phone: '',
+        group: ''
+      }
+    },
+    contactClosed(state) {
+      state.contact = {
+        name: '',
+        email: '',
+        phone: '',
+        group: ''
+      }
     }
-
   },
   actions: {
     addContactAsync({ commit }, payload) {
+      commit('contactSaving')
       setTimeout(() => {
         commit('addContact', payload)
-        console.log(payload)
-      }, 1000)
+        commit('contactSaved')
+      }, 2000)
     },
-    increment({ commit }, payload) {
-      commit('increment', payload);
-      console.log(payload)
+    openContact({ commit }, payload) {
+      commit('contactOpened', payload)
+    },
+    closeContact({ commit }, payload) {
+      commit('contactClosed', payload)
     }
 
   }
 })
 
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: Home },
+    { path: '/contact', component: Contact },
+  ]
+});
 
-
-
-const routes = [
-  { path: '/', component: Home },
-  { path: '/contact', component: Contact },
-]
-
-const router = VueRouter.createRouter({
-  history: VueRouter.createWebHashHistory(),
-  routes,
-})
-
-const app = Vue.createApp({})
-app.use(router)
+const app = createApp(App)
+app.use(router);
 app.use(store)
 app.mount('#app')
-
-
-

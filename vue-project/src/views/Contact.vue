@@ -1,34 +1,33 @@
 <script>
 import { mapActions } from 'vuex'
-import { ref } from 'vue'
 
 export default {
-    data: () => ({
-        formData: {
-            email: "",
-        },
-    }),
     methods: {
-        closeContact() {
-            this.$router.push('/');
-        },
-
+        ...mapActions([
+            'addContactAsync',
+            'closeContact'
+        ]),
         async addContact() {
-            await this.$store.dispatch("addContactAsync", {
-                email: this.formData.email
+            await this.addContactAsync({
+                name: this.name,
+                email: this.email,
+                phone: this.phone,
+                group: this.group,
+                date: new Date()
             })
-            this.$router.push('/')
-        }       
-
+        },
+        back() {
+            this.$router.push('/');
+            this.closeContact();
+        }
     }
 }
-
 </script>
 
 <template>
     <div class="contact_title">
         <div class="contact_title__name">Name</div>
-        <div @click="closeContact" class="btn-close">
+        <div @click="back" class="btn-close">
             <img src="../imgs/close.svg" />
         </div>
     </div>
@@ -40,39 +39,38 @@ export default {
 
         <div class="container_row">
             <p class="container_label">Имя</p>
-            <input class="container_input" type="text" name="name" id="name" placeholder="Например «Андрей»..."
-                v-model="name">
+            <input v-model="this.$store.state.contact.name" class="container_input" type="text" name="name" placeholder="Например «Андрей»...">
         </div>
         <div class="container_row">
             <p class="container_label">Телефон</p>
-            <input class="container_input" type="phone" name="phone" id="phone" placeholder="Например «Андрей»..."
-                v-model="$store.state.phone">
+            <input v-model="this.$store.state.contact.phone" class="container_input" type="phone" name="phone" placeholder="Например «Андрей»..." />
         </div>
         <div class="container_row">
             <p class="container_label">E-mail</p>
-            <input class="container_input" type="email" placeholder="Например «pochta@domain.ru»..."
-                v-model="formData.email">
+            <input v-model="this.$store.state.contact.email" class="container_input" type="email" placeholder="Например «pochta@domain.ru»...">
         </div>
         <div class="container_row">
             <p class="container_label">Категория</p>
             <div>
-                <select class="container_input" name="movie" id="movie" placeholder="Например «Андрей»..." v-model="movie">
+                <select v-model="this.$store.state.contact.group" class="container_input" placeholder="Например «Андрей»..." >
                     <option>Не выбрано</option>
                     <option>Родственники</option>
                     <option>Коллеги</option>
                 </select>
             </div>
         </div>
-        <div class="container_row">
+
+        <div v-if="this.$store.state.contact.date" class="container_row">
             <p class="container_label">Создан</p>
-            <p>data</p>
+            <p>{{this.$store.state.contact.date}}</p>
         </div>
 
         <div class="container_row">
             <div></div>
             <div class="container_buttons">
-                <button class="btn-save" @click="addContact">
-                    <img src="../imgs/save.svg" />
+                <button @click="addContact" class="btn-save">
+                    <img v-if="!this.$store.state.contactSaving" src="../imgs/save.svg" />
+                    <img v-if="this.$store.state.contactSaving" src="../imgs/loader.svg"/>
                     СОХРАНИТЬ
                 </button>
                 <button class="btn-remove">
@@ -81,7 +79,6 @@ export default {
                 </button>
             </div>
         </div>
-
     </div>
 </template>
 

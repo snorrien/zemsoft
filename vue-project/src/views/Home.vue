@@ -1,9 +1,20 @@
 <script>
+import { mapActions } from 'vuex'
+
 export default {
     methods: {
-        openContact() {
+        ...mapActions([
+            'openContact'
+        ]),
+        createContact() {
+            this.openContact()
             this.$router.push('/contact')
         },
+        editContact(contact) {
+            this.openContact(contact)
+            this.$router.push('/contact')
+
+        }
     },
 }
 </script>
@@ -17,7 +28,7 @@ export default {
     <div class="navigate">
         <div class="navigate_container">
             <div>все</div>
-            <button class="btn-add" @click="openContact">
+            <button class="btn-add" @click="createContact">
                 +
                 <p class="text">Добавить контакт</p>
             </button>
@@ -31,17 +42,16 @@ export default {
             <div>E-MAIL</div>
             <div class="col-data">СОЗДАН</div>
         </div>
-        <div class="contacts_row grid">
+        <div class="contacts_row grid" v-for="contact in this.$store.state.contacts" @click="editContact(contact)">
             <div>
                 <div class="contact_name">
-                    <div class="contact_letter">A</div>
-                    <p>Айтишник Данила</p>
+                    <div class="contact_letter">{{ contact.name?.charAt(0)?.toUpperCase() ?? "-" }}</div>
+                    <p>{{ contact.name }}</p>
                 </div>
-                
             </div>
-            <div class="contact_phone">+7(987)654-78-09</div>
-            <div class="contact_email">nelfeelingood@gmail.com</div>
-            <div class="col-data">22.09.23</div>
+            <div class="contact_phone">{{ contact.phone }}</div>
+            <div class="contact_email">{{ contact.email }}</div>
+            <div class="col-date">{{ contact.date }}</div>
         </div>
     </div>
 </template>
@@ -123,12 +133,12 @@ export default {
     font-size: 10px;
 }
 
-.contact_letter{
+.contact_letter {
     text-transform: uppercase;
     background-color: var(--bg-yellow);
     border-radius: 50%;
     padding: 3px;
-    width:26px;
+    width: 26px;
     font-size: 12px;
     font-weight: 700;
     display: flex;
@@ -137,18 +147,18 @@ export default {
 
 }
 
-.contact_name{
+.contact_name {
     display: flex;
     text-align: center;
-    gap:8px;
+    gap: 8px;
 }
 
 .contact_phone,
-.contact_email{
+.contact_email {
     font-size: 12px;
 }
 
-.col-data {
+.col-date {
     text-align: end;
 }
 
