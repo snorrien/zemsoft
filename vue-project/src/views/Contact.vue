@@ -1,25 +1,97 @@
 <script>
 import { mapActions } from 'vuex'
+import Message from './Message.vue'
+
 
 export default {
+    props: ['contactName'],
+    components: {
+        Message
+    },
+    data() {
+        console.log(this.contactName)
+        const contact = this.$store.state.contacts.find(c => c.name === this.contactName);
+        return {
+            id: contact ? contact.id : '',
+            name: contact ? contact.name : '',
+            email: contact ? contact.email : '',
+            phone: contact ? contact.phone : '',
+            group: contact ? contact.group : '',
+            date: contact ? contact.date : null,
+            nameError: null,
+            emailError: null
+        }
+    },
     methods: {
         ...mapActions([
             'addContactAsync',
-            'closeContact'
+            'updateContactAsync'
         ]),
-        async addContact() {
-            await this.addContactAsync({
-                name: this.name,
-                email: this.email,
-                phone: this.phone,
-                group: this.group,
-                date: new Date()
-            })
+        async addContact(e) {
+            const inputsAreValid = this.validateInputs();
+            console.log(inputsAreValid)
+            if (!inputsAreValid) {
+                return;
+            }
+
+            if (this.contactName) {
+                await this.updateContactAsync({
+                    id: this.id,
+                    name: this.name,
+                    email: this.email,
+                    phone: this.phone,
+                    group: this.group,
+                    date: this.date
+                });
+            } else {
+                await this.addContactAsync({
+                    name: this.name,
+                    email: this.email,
+                    phone: this.phone,
+                    group: this.group,
+                    date: this.getFormattedDate()
+                })
+            }
         },
         back() {
             this.$router.push('/');
-            this.closeContact();
-        }
+        },
+        getFormattedDate() {
+            const date = new Date();
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+            return `${day}.${month}.${year}`
+        },
+        validateInputs() {
+            this.validateName()
+            this.validateEmail()
+
+            if (this.nameError || this.emailError) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        validateName() {
+            const value = this.name
+            if (value.length <= 3) {
+                this.nameError = 'Слишком короткое имя'
+            } else if (value.length === 0) {
+                this.nameError = 'Поле не можеть быть пустым'
+            } else {
+                this.nameError = null;
+            }
+        },
+        validateEmail() {
+            const value = this.email;
+            console.log('email')
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+                this.emailError = null
+            } else {
+                this.emailError = "Некорректный e-mail"
+            }
+        },
     }
 }
 </script>
@@ -39,30 +111,42 @@ export default {
 
         <div class="container_row">
             <p class="container_label">Имя</p>
-            <input v-model="this.$store.state.contact.name" class="container_input" type="text" name="name" placeholder="Например «Андрей»...">
+            <div class="container_input">
+                <input v-model="name" class="input" type="text" placeholder="Например «Андрей»...">
+                <img src="../imgs/invalid-icon.svg" />
+                <span v-if="nameError">{{ nameError }}</span>
+            </div>
         </div>
         <div class="container_row">
             <p class="container_label">Телефон</p>
-            <input v-model="this.$store.state.contact.phone" class="container_input" type="phone" name="phone" placeholder="Например «Андрей»..." />
+            <div class="container_input">
+                <input v-model="phone" placeholder="+7 (___) ___ __ __" class="input" type="phone" />
+            </div>
         </div>
         <div class="container_row">
             <p class="container_label">E-mail</p>
-            <input v-model="this.$store.state.contact.email" class="container_input" type="email" placeholder="Например «pochta@domain.ru»...">
+            <div class="container_input">
+                <input v-model="email" class="input" placeholder="Например «pochta@domain.ru»...">
+                <span v-if="emailError">{{ nameError }}</span>
+            </div>
         </div>
         <div class="container_row">
+
             <p class="container_label">Категория</p>
             <div>
-                <select v-model="this.$store.state.contact.group" class="container_input" placeholder="Например «Андрей»..." >
-                    <option>Не выбрано</option>
-                    <option>Родственники</option>
-                    <option>Коллеги</option>
-                </select>
+                <div class="container_input">
+                    <select v-model="group" class="input">
+                        <option>ВСЕ</option>
+                        <option>Родственники</option>
+                        <option>Коллеги</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div v-if="this.$store.state.contact.date" class="container_row">
+        <div v-if="date" class="container_row">
             <p class="container_label">Создан</p>
-            <p>{{this.$store.state.contact.date}}</p>
+            <p>{{ this.date }}</p>
         </div>
 
         <div class="container_row">
@@ -70,7 +154,7 @@ export default {
             <div class="container_buttons">
                 <button @click="addContact" class="btn-save">
                     <img v-if="!this.$store.state.contactSaving" src="../imgs/save.svg" />
-                    <img v-if="this.$store.state.contactSaving" src="../imgs/loader.svg"/>
+                    <img v-if="this.$store.state.contactSaving" src="../imgs/loader.svg" />
                     СОХРАНИТЬ
                 </button>
                 <button class="btn-remove">
@@ -79,6 +163,9 @@ export default {
                 </button>
             </div>
         </div>
+    </div>
+    <div class="message_container">
+        <Message />
     </div>
 </template>
 
@@ -141,13 +228,33 @@ export default {
 }
 
 .container_input {
+    position: relative;
+}
+
+.container_input img {
+    position: absolute;
+    right: .5rem;
+    top: 25%;
+    margin-left: 40px;
+}
+
+.container_input span {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    color: var(--red);
+    font-size: 10px;
+}
+
+.input {
     width: 100%;
-    padding: 8px;
+    padding: .5rem 1.5rem .5rem .5rem;
     border-radius: 4px;
     border: 1px solid #DDD;
     background-color: var(--bg-white);
     outline: none;
     caret-color: var(--blue);
+
 
     &:hover,
     &:active {
@@ -195,5 +302,11 @@ export default {
     cursor: pointer;
     caret-color: transparent;
     color: var(--blue);
+}
+
+.message_container {
+    position: absolute;
+    bottom: 3rem;
+    left: 2rem;
 }
 </style>

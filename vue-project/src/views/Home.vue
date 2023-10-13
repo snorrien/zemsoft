@@ -3,17 +3,11 @@ import { mapActions } from 'vuex'
 
 export default {
     methods: {
-        ...mapActions([
-            'openContact'
-        ]),
         createContact() {
-            this.openContact()
-            this.$router.push('/contact')
+            this.$router.push('/contact');
         },
         editContact(contact) {
-            this.openContact(contact)
-            this.$router.push('/contact')
-
+            this.$router.push(`/contact/${contact.name}`)
         }
     },
 }
