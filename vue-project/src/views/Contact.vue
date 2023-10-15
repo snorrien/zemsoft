@@ -1,6 +1,7 @@
 <script>
 import { mapActions } from 'vuex'
 import Message from './Message.vue'
+import PhoneMaskInput from  "vue-phone-mask-input";
 
 
 export default {
@@ -77,11 +78,13 @@ export default {
             const value = this.name
             if (value.length <= 3) {
                 this.nameError = 'Слишком короткое имя'
+                
             } else if (value.length === 0) {
                 this.nameError = 'Поле не можеть быть пустым'
             } else {
                 this.nameError = null;
             }
+
         },
         validateEmail() {
             const value = this.email;
@@ -113,7 +116,7 @@ export default {
             <p class="container_label">Имя</p>
             <div class="container_input">
                 <input v-model="name" class="input" type="text" placeholder="Например «Андрей»...">
-                <img src="../imgs/invalid-icon.svg" />
+                <img :class="{ active: nameError === null }" src="../imgs/invalid-icon.svg" />
                 <span v-if="nameError">{{ nameError }}</span>
             </div>
         </div>
@@ -127,6 +130,7 @@ export default {
             <p class="container_label">E-mail</p>
             <div class="container_input">
                 <input v-model="email" class="input" placeholder="Например «pochta@domain.ru»...">
+                <img :class="{ active: emailError === null }" src="../imgs/invalid-icon.svg" />
                 <span v-if="emailError">{{ nameError }}</span>
             </div>
         </div>
@@ -293,6 +297,10 @@ export default {
     &:active {
         background-color: var(--active-yellow);
     }
+}
+
+.active{
+    display: none;
 }
 
 .btn-remove {

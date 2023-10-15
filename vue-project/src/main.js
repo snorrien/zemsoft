@@ -7,6 +7,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 
 
+
 const store = createStore({
   state: {
     lastId: 0,
