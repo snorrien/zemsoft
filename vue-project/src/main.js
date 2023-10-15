@@ -5,8 +5,7 @@ import { createApp } from 'vue'
 import { createStore } from 'vuex'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-
-
+import { vMaska } from "maska"
 
 const store = createStore({
   state: {
@@ -65,7 +64,7 @@ const router = createRouter({
   ]
 });
 
-const app = createApp(App)
+const app = createApp(App).directive("maska", vMaska)
 app.use(router);
 app.use(store)
 app.mount('#app')

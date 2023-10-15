@@ -1,7 +1,6 @@
 <script>
 import { mapActions } from 'vuex'
 import Message from './Message.vue'
-import PhoneMaskInput from  "vue-phone-mask-input";
 
 
 export default {
@@ -78,7 +77,6 @@ export default {
             const value = this.name
             if (value.length <= 3) {
                 this.nameError = 'Слишком короткое имя'
-                
             } else if (value.length === 0) {
                 this.nameError = 'Поле не можеть быть пустым'
             } else {
@@ -91,7 +89,9 @@ export default {
             console.log('email')
             if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
                 this.emailError = null
-            } else {
+            } else if (value.length === 0) {
+                this.emailError = 'Поле не можеть быть пустым'
+            }else {
                 this.emailError = "Некорректный e-mail"
             }
         },
@@ -123,7 +123,7 @@ export default {
         <div class="container_row">
             <p class="container_label">Телефон</p>
             <div class="container_input">
-                <input v-model="phone" placeholder="+7 (___) ___ __ __" class="input" type="phone" />
+                <input v-model="phone" placeholder="+7 (___) ___ __ __" class="input"  v-maska data-maska="+7(###)-###-##-##"/>
             </div>
         </div>
         <div class="container_row">
@@ -131,7 +131,7 @@ export default {
             <div class="container_input">
                 <input v-model="email" class="input" placeholder="Например «pochta@domain.ru»...">
                 <img :class="{ active: emailError === null }" src="../imgs/invalid-icon.svg" />
-                <span v-if="emailError">{{ nameError }}</span>
+                <span v-if="emailError">{{ emailError }}</span>
             </div>
         </div>
         <div class="container_row">
