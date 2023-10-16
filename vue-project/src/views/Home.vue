@@ -8,8 +8,8 @@ export default {
             valueDropdown: 'ВСЕ',
             list: ["ВСЕ", "Родственники", "Коллеги"],
             visible: false,
-            contacts: [ ...initialContacts ],
-            initialContacts: [ ...initialContacts ],
+            contacts: [...initialContacts],
+            initialContacts: [...initialContacts],
         }
     },
     methods: {
@@ -73,18 +73,20 @@ export default {
             <div>КОНТАКТ</div>
             <div>ТЕЛЕФОН</div>
             <div>E-MAIL</div>
-            <div class="col-data">СОЗДАН</div>
+            <div class="col-date">СОЗДАН</div>
         </div>
-        <div class="contacts_row grid" v-for="contact in this.contacts" @click="editContact(contact)">
-            <div>
-                <div class="contact_name">
-                    <div class="contact_letter">{{ contact.name?.charAt(0)?.toUpperCase() ?? "-" }}</div>
-                    <p>{{ contact.name }}</p>
+        <div class="cont">
+            <div class="contacts_row grid" v-for="contact in this.contacts" @click="editContact(contact)">
+                <div>
+                    <div class="contact_name">
+                        <div class="contact_letter">{{ contact.name?.charAt(0)?.toUpperCase() ?? "-" }}</div>
+                        <p>{{ contact.name }}</p>
+                    </div>
                 </div>
+                <div class="contact_phone">{{ contact.phone }}</div>
+                <div class="contact_email">{{ contact.email }}</div>
+                <div class="col-date">{{ contact.date }}</div>
             </div>
-            <div class="contact_phone">{{ contact.phone }}</div>
-            <div class="contact_email">{{ contact.email }}</div>
-            <div class="col-date">{{ contact.date }}</div>
         </div>
     </div>
 </template>
@@ -135,7 +137,7 @@ export default {
     border: 1px solid var(--blue);
     background-color: var(--bg-grey);
     color: var(--blue);
-    font-size: 20px;
+    font-size: 12px;
     text-transform: uppercase;
 
     &:hover {
@@ -230,16 +232,23 @@ export default {
 }
 
 .contacts_table {
-
     margin-left: auto;
     margin-right: auto;
     max-width: 990px;
+    margin-top: 1rem;
 }
 
 .grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1.5fr 1fr;
     align-items: center;
+}
+
+.contacts_row{
+    height: 3rem;
+}
+.cont .contacts_row:not(:first-child) {
+    border-top: 1px solid #EAF2FD;
 }
 
 .contacts_title {

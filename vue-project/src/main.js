@@ -59,7 +59,7 @@ const store = createStore({
       await timeout(2000)
       commit('addContact', contact)
       commit('contactSaved')
-      commit('showMessage', 'Контакт успешно добавлен')
+      commit('showMessage', 'Контакт успешно создан')
       await timeout(3000)
       commit('hideMessage')
     },
@@ -68,13 +68,13 @@ const store = createStore({
       await timeout(2000)
       commit('updateContact', contact)
       commit('contactSaved')
-      commit('showMessage', 'Контакт успешно обновлен')
+      commit('showMessage', 'Контакт успешно изменён')
       await timeout(3000)
       commit('hideMessage')
     },
     async removeContactAsync({ commit }, contactId) {
       commit('removeContact', contactId)
-      commit('showMessage', 'Контакт успешно удален')
+      commit('showMessage', 'Контакт удален')
       await timeout(3000)
       commit('hideMessage')
     }
