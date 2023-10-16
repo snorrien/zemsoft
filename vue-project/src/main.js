@@ -7,21 +7,26 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import { vMaska } from "maska"
 
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const store = createStore({
   state: {
     lastId: 0,
     contacts: [],
-    contactSaving: false
+    contactSaving: false,
+    message: null
   },
   mutations: {
-    addContact(state, payload) {
+    addContact(state, contact) {
       state.lastId++
 
-      payload.id = state.lastId
+      contact.id = state.lastId
 
       state.contacts = [
         ...state.contacts,
-        payload
+        contact
       ]
     },
     contactSaving(state) {
@@ -30,38 +35,49 @@ const store = createStore({
     contactSaved(state) {
       state.contactSaving = false
     },
-    updateContact(state, payload) {
+    updateContact(state, contact) {
       state.contacts = [
-        ...state.contacts.filter(element => element.id !== payload.id),
-        payload
+        ...state.contacts.filter(element => element.id !== contact.id),
+        contact
       ]
     },
-    removeContact(state, payload) {
+    removeContact(state, contactId) {
       state.contacts = [
-        ...state.contacts.filter(element => element.id !== payload)
+        ...state.contacts.filter(element => element.id !== contactId)
       ]
+    },
+    showMessage(state, message) {
+      state.message = message;
+    },
+    hideMessage(state) {
+      state.message = null;
     }
-
   },
   actions: {
-    addContactAsync({ commit }, payload) {
+    async addContactAsync({ commit }, contact) {
       commit('contactSaving')
-      setTimeout(() => {
-        commit('addContact', payload)
-        commit('contactSaved')
-      }, 2000)
+      await timeout(2000)
+      commit('addContact', contact)
+      commit('contactSaved')
+      commit('showMessage', 'Контакт успешно добавлен')
+      await timeout(3000)
+      commit('hideMessage')
     },
-    updateContactAsync({ commit }, payload) {
+    async updateContactAsync({ commit }, contact) {
       commit('contactSaving')
-      setTimeout(() => {
-        commit('updateContact', payload)
-        commit('contactSaved')
-      }, 2000)
+      await timeout(2000)
+      commit('updateContact', contact)
+      commit('contactSaved')
+      commit('showMessage', 'Контакт успешно обновлен')
+      await timeout(3000)
+      commit('hideMessage')
     },
-    removeContactAsync({ commit }, payload) {
-      commit('removeContact', payload)
-    },
-
+    async removeContactAsync({ commit }, contactId) {
+      commit('removeContact', contactId)
+      commit('showMessage', 'Контакт успешно удален')
+      await timeout(3000)
+      commit('hideMessage')
+    }
   }
 })
 

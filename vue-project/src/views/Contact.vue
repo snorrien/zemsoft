@@ -1,12 +1,11 @@
 <script>
 import { mapActions } from 'vuex'
-import Message from './Message.vue'
+import ValidationService from '../services/validation-service';
+
+const validation = new ValidationService();
 
 export default {
     props: ['contactName'],
-    components: {
-        Message
-    },
     data() {
         const contact = this.$store.state.contacts.find(c => c.name === this.contactName);
 
@@ -15,17 +14,17 @@ export default {
             name: contact ? contact.name : '',
             email: contact ? contact.email : '',
             phone: contact ? contact.phone : '',
-            group: contact ? contact.group : '',
+            group: contact ? contact.group : null,
             date: contact ? contact.date : null,
             nameError: null,
             emailError: null,
             phoneError: null,
             groupError: null,
 
-            valueDropdown: 'Не выбрано',
+            valueDropdown: contact ? contact.group : 'Не выбрано',
+            isInitialValueDropdown: !contact,
             list: ["Родственники", "Коллеги"],
-            visible: false,
-            isInitialValueDropdown: true,
+            visible: false
         }
     },
     methods: {
@@ -57,12 +56,11 @@ export default {
                     group: this.group,
                     date: this.getFormattedDate()
                 })
-                this.$router.push('/');
             }
         },
-        removeContact() {   
+        removeContact() {
             this.removeContactAsync(this.id);
-            this.$router.push('/');
+            this.back();
         },
         back() {
             this.$router.push('/');
@@ -75,10 +73,10 @@ export default {
             return `${day}.${month}.${year}`
         },
         validateInputs() {
-            this.validateName()
-            this.validateEmail()
-            this.validatePhone()
-            this.validateGroup()
+            this.nameError = validation.validateName(this.name)
+            this.emailError = validation.validateEmail(this.email)
+            this.phoneError = validation.validatePhone(this.phone)
+            this.groupError = validation.validateGroup(this.group)
 
             if (this.nameError || this.emailError || this.phoneError || this.groupError) {
                 return false;
@@ -86,43 +84,7 @@ export default {
                 return true;
             }
         },
-        validateName() {
-            const value = this.name
-            if (value.length < 3) {
-                this.nameError = 'Слишком короткое имя'
-            } else if (value.length === 0) {
-                this.nameError = 'Поле не можеть быть пустым'
-            } else {
-                this.nameError = null;
-            }
-        },
-        validatePhone() {
-            const value = this.phone;
-            if (value.length < 17) {
-                this.phoneError = 'Некорректный номер'
-            } else if (value.length === 0) {
-                this.phoneError = 'Поле не можеть быть пустым'
-            } else {
-                this.phoneError = null;
-            }
-        },
-        validateEmail() {
-            const value = this.email;
-            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-                this.emailError = null
-            } else if (value.length === 0) {
-                this.emailError = 'Поле не можеть быть пустым'
-            } else {
-                this.emailError = 'Некорректный e-mail'
-            }
-        },
-        validateGroup() {
-            if (this.isInitialValueDropdown) {
-                this.groupError = 'Поле не можеть быть пустым'
-            }else {
-                this.groupError = null
-            }
-        },
+
 
         toggleDropdown() {
             this.visible = !this.visible;
@@ -152,43 +114,45 @@ export default {
         <div class="container_row">
             <p class="container_label">Имя</p>
             <div class="container_input">
-                <input v-model="name" class="input" type="text" placeholder="Например «Андрей»...">
-                <img :class="{ active: nameError === null }" src="../imgs/invalid-icon.svg" />
+                <input v-model="name" :class="{ errorinput: nameError !== null }" class="input" type="text"
+                    placeholder="Например «Андрей»...">
+
+                <img v-if="nameError" src="../imgs/invalid-icon.svg" />
                 <span class="error-text" v-if="nameError">{{ nameError }}</span>
             </div>
         </div>
         <div class="container_row">
             <p class="container_label">Телефон</p>
             <div class="container_input">
-                <input v-model="phone" placeholder="+7 (___) ___ __ __" class="input" v-maska
-                    data-maska="+7(###)-###-##-##" />
-                <img :class="{ active: phoneError === null }" src="../imgs/invalid-icon.svg" />
+                <input v-model="phone" :class="{ errorinput: phoneError !== null }" placeholder="+7 (___) ___ __ __"
+                    class="input" v-maska data-maska="+7(###)-###-##-##" />
+                <img v-if="phoneError" src="../imgs/invalid-icon.svg" />
                 <span class="error-text" v-if="phoneError">{{ phoneError }}</span>
             </div>
         </div>
         <div class="container_row">
             <p class="container_label">E-mail</p>
             <div class="container_input">
-                <input v-model="email" class="input" placeholder="Например «pochta@domain.ru»...">
-                <img :class="{ active: emailError === null }" src="../imgs/invalid-icon.svg" />
+                <input v-model="email" :class="{ errorinput: emailError !== null }" class="input"
+                    placeholder="Например «pochta@domain.ru»...">
+                <img v-if="emailError" :class="{ active: emailError === null }" src="../imgs/invalid-icon.svg" />
                 <span class="error-text" v-if="emailError">{{ emailError }}</span>
             </div>
         </div>
         <div class="container_row">
             <p class="container_label">Категория</p>
             <div class="container_input">
-                
-                <div class="input selectGroup" @click="toggleDropdown()" :data-value="valueDropdown" :data-list="list">
+                <div class="input selectGroup" :class="{ errorinput: groupError !== null }" @click="toggleDropdown()"
+                    :data-value="valueDropdown" :data-list="list">
                     <span class="error-text" v-if="groupError">{{ groupError }}</span>
-                    <div class="selector" >
+                    <div class="selector" :class="{ errorselector: groupError !== null }">
                         <div class="label" :class="{ 'gray-text': isInitialValueDropdown }">
                             {{ valueDropdown }}
                         </div>
-                        
                         <div class="arrow" :class="{ expanded: visible }"></div>
                         <div :class="{ hidden: !visible, visible }">
                             <ul>
-                                <li :class="{ current: item === valueDropdown }" v-for="item in list"
+                                <li :class="{ current: item === valueDropdown }" v-for=" item  in  list "
                                     @click="selectItem(item)">{{ item }}
                                 </li>
                             </ul>
@@ -217,9 +181,6 @@ export default {
                 </button>
             </div>
         </div>
-    </div>
-    <div class="message_container">
-        <Message />
     </div>
 </template>
 
@@ -308,7 +269,7 @@ export default {
     background-color: var(--bg-white);
     outline: none;
     caret-color: var(--blue);
-
+    font-family: 'Montserrat', sans-serif;
 
     &:hover,
     &:active {
@@ -325,23 +286,6 @@ export default {
     cursor: pointer;
 
     .selector {
-        z-index: 1;
-
-        .arrow {
-            position: absolute;
-            right: 12px;
-            top: 40%;
-            width: 0;
-            z-index: 10;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid rgba(169, 169, 169, 1);
-            transform: rotateZ(0deg) translateY(0px);
-            transition-duration: 0.3s;
-            transition-timing-function: cubic-bezier(.59, 1.39, .37, 1.01);
-        }
-
         .expanded {
             transform: rotateZ(180deg) translateY(2px);
         }
@@ -389,6 +333,21 @@ export default {
     }
 }
 
+.arrow {
+    position: absolute;
+    right: 12px;
+    top: 40%;
+    width: 0;
+    z-index: 10;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(169, 169, 169, 1);
+    transform: rotateZ(0deg) translateY(0px);
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(.59, 1.39, .37, 1.01);
+}
+
 .container_buttons {
     display: flex;
     gap: 24px;
@@ -426,6 +385,24 @@ export default {
     display: none;
 }
 
+.errorinput {
+    border: 1px solid var(--red);
+
+    &::placeholder {
+        color: var(--red);
+    }
+}
+
+.errorselector {
+    .arrow {
+        border-top: 5px solid var(--red);
+    }
+
+    .label {
+        color: var(--red);
+    }
+}
+
 .btn-remove {
     background-color: var(--bg-white);
     border: none;
@@ -439,5 +416,4 @@ export default {
     position: absolute;
     bottom: 3rem;
     left: 2rem;
-}
-</style>
+}</style>

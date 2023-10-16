@@ -5,7 +5,7 @@
 <template>
     <div class="message">
         <img src="../imgs/ok.svg" />
-        <p>Контакт успешно изменён</p>
+        <p>{{ this.$store.state.message }}</p>
     </div>
 </template>
 
