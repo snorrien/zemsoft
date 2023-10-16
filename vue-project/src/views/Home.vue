@@ -244,9 +244,10 @@ export default {
     align-items: center;
 }
 
-.contacts_row{
+.contacts_row {
     height: 3rem;
 }
+
 .cont .contacts_row:not(:first-child) {
     border-top: 1px solid #EAF2FD;
 }
@@ -285,10 +286,31 @@ export default {
     text-align: end;
 }
 
+@media (max-width: 996px) {
+
+    .navigate_container,
+    .contacts_table {
+        margin-left: 2rem;
+        margin-right: 2rem;
+    }
+}
 
 @media screen and (max-width: 770px) {
     .title {
         height: 40px
     }
+}
+
+@media screen and (max-width: 578px) {
+
+    .navigate_container,
+    .contacts_table {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+
+ 
+
 }
 </style>

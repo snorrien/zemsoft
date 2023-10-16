@@ -100,7 +100,14 @@ export default {
 
 <template>
     <div class="contact_title">
-        <div class="contact_title__name">Name</div>
+        <div class="contact_title__name" v-if="!id">
+            <img src="../imgs/add-icon.svg" />
+            <p> Добавить контакт</p>
+        </div>
+        <div class="contact_title__name" v-if="id">
+            <div class="title__letter">{{ this.name?.charAt(0)?.toUpperCase()}}</div>
+            <p>{{ this.name }}</p>
+        </div>
         <div @click="back" class="btn-close">
             <img src="../imgs/close.svg" />
         </div>
@@ -110,7 +117,6 @@ export default {
         <div class="container_title">
             Контакт
         </div>
-
         <div class="container_row">
             <p class="container_label">Имя</p>
             <div class="container_input">
@@ -188,8 +194,6 @@ export default {
 .contact_title {
     background-color: var(--bg-black);
     color: var(--title-text);
-    font-weight: 700;
-    font-size: 20px;
     height: 3rem;
     display: flex;
     justify-content: end;
@@ -200,6 +204,16 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+
+    p {
+        font-weight: 700;
+        font-size: 20px;
+    }
+
+    img {
+        padding-right: 8px;
+    }
 }
 
 .btn-close {
@@ -228,6 +242,24 @@ export default {
     align-items: center;
     margin-bottom: 24px;
 }
+
+.title__letter{
+    text-transform: uppercase;
+    background-color: var(--bg-yellow);
+    border-radius: 50%;
+    padding: 3px;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: var(--text);
+    align-items: center;
+    margin-right: 8px;
+}
+
 
 .container_row {
     display: grid;
@@ -416,4 +448,20 @@ export default {
     position: absolute;
     bottom: 3rem;
     left: 2rem;
-}</style>
+}
+
+@media (max-width: 994px) {
+   
+}
+
+
+@media (max-width: 578px) {
+    .message_container {
+        bottom: auto;
+        left: 40%;
+        top:70px;
+        
+    }
+}
+
+</style>
