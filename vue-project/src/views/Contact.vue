@@ -2,7 +2,6 @@
 import { mapActions } from 'vuex'
 import Message from './Message.vue'
 
-
 export default {
     props: ['contactName'],
     components: {
@@ -22,10 +21,12 @@ export default {
             nameError: null,
             emailError: null,
             phoneError: null,
+            groupError: null,
 
-            valueDropdown: 'ВСЕ',
-            list: ["ВСЕ", "Родственники", "Коллеги"],
+            valueDropdown: 'Не выбрано',
+            list: ["Родственники", "Коллеги"],
             visible: false,
+            isInitialValueDropdown: true,
         }
     },
     methods: {
@@ -73,8 +74,9 @@ export default {
             this.validateName()
             this.validateEmail()
             this.validatePhone()
+            this.validateGroup()
 
-            if (this.nameError || this.emailError || this.phoneError) {
+            if (this.nameError || this.emailError || this.phoneError || this.groupError) {
                 return false;
             } else {
                 return true;
@@ -102,7 +104,6 @@ export default {
         },
         validateEmail() {
             const value = this.email;
-            console.log('email')
             if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
                 this.emailError = null
             } else if (value.length === 0) {
@@ -111,12 +112,22 @@ export default {
                 this.emailError = 'Некорректный e-mail'
             }
         },
+        validateGroup() {
+            const value = this.group;
+            if (value === '') {
+                console.log('error-group')
+                this.groupError = 'Поле не можеть быть пустым'
+            }else {
+                this.groupError = null
+            }
+        },
+
         toggleDropdown() {
             this.visible = !this.visible;
         },
         selectItem(option) {
             this.valueDropdown = option;
-
+            this.isInitialValueDropdown = false;
         }
     }
 }
@@ -161,14 +172,17 @@ export default {
             </div>
         </div>
         <div class="container_row">
-
             <p class="container_label">Категория</p>
             <div class="container_input">
-                <div class="input aselect" :data-value="valueDropdown" :data-list="list">
+                
+                <div class="input selectGroup" :data-value="valueDropdown" :data-list="list">
+                    <img :class="{ active: groupError === null }" src="../imgs/invalid-icon.svg" />
+                    <span class="error-text" v-if="groupError">{{ groupError }}</span>
                     <div class="selector" @click="toggleDropdown()">
-                        <div class="label">
+                        <div class="label" :class="{ 'gray-text': isInitialValueDropdown }">
                             {{ valueDropdown }}
                         </div>
+                        
                         <div class="arrow" :class="{ expanded: visible }"></div>
                         <div :class="{ hidden: !visible, visible }">
                             <ul>
@@ -208,7 +222,6 @@ export default {
 </template>
 
 <style lang="scss">
-
 .contact_title {
     background-color: var(--bg-black);
     color: var(--title-text);
@@ -274,6 +287,7 @@ export default {
     right: .5rem;
     top: 25%;
     margin-left: 40px;
+    z-index: 100;
 }
 
 .error-text {
@@ -304,7 +318,7 @@ export default {
     color: #A9A9A9;
 }
 
-.aselect {
+.selectGroup {
     position: relative;
     cursor: pointer;
 
@@ -316,6 +330,7 @@ export default {
             right: 12px;
             top: 40%;
             width: 0;
+            z-index: 10;
             height: 0;
             border-left: 5px solid transparent;
             border-right: 5px solid transparent;
@@ -331,13 +346,6 @@ export default {
 
         .label {
             line-height: normal;
-        }
-
-        .label  {
-            font-weight: 700;
-            &:hover{
-                font-weight: 400;
-            }
         }
     }
 
@@ -368,7 +376,6 @@ export default {
         background-image: url("../imgs/choose-yes.svg");
         background-repeat: no-repeat;
         background-position: calc(100% - 8px) center;
-        font-weight: 700;
     }
 
     .hidden {
@@ -407,6 +414,10 @@ export default {
     &:active {
         background-color: var(--active-yellow);
     }
+}
+
+.gray-text {
+    color: #A9A9A9;
 }
 
 .active {

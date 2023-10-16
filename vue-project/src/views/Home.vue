@@ -2,12 +2,25 @@
 import { mapActions } from 'vuex'
 
 export default {
+    data() {
+        return {
+            valueDropdown: 'ВСЕ',
+            list: ["ВСЕ", "Родственники", "Коллеги"],
+            visible: false,
+        }
+    },
     methods: {
         createContact() {
             this.$router.push('/contact');
         },
         editContact(contact) {
             this.$router.push(`/contact/${contact.name}`)
+        },
+        toggleDropdown() {
+            this.visible = !this.visible;
+        },
+        selectItem(option) {
+            this.valueDropdown = option;
         }
     },
 }
@@ -21,7 +34,25 @@ export default {
 
     <div class="navigate">
         <div class="navigate_container">
-            <div>все</div>
+
+            <div class="filter">
+                <div class="input selectFilter" :data-value="valueDropdown" :data-list="list">
+                    <div class="selector" @click="toggleDropdown()">
+                        <div class="label">
+                            {{ valueDropdown }}
+                        </div>
+                        <div class="arrow" :class="{ expanded: visible }"></div>
+                        <div :class="{ hidden: !visible, visible }">
+                            <ul>
+                                <li :class="{ current: item === valueDropdown }" v-for="item in list"
+                                    @click="selectItem(item)">{{ item }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <button class="btn-add" @click="createContact">
                 +
                 <p class="text">Добавить контакт</p>
@@ -107,6 +138,87 @@ export default {
 .btn-add p {
     font-weight: 700;
     font-size: 12px;
+}
+
+.filter{
+    width: 235px;
+}
+
+.selectFilter {
+    position: relative;
+    cursor: pointer;
+
+    .selector {
+        z-index: 1;
+
+        .arrow {
+            position: absolute;
+            right: 12px;
+            top: 40%;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid rgba(169, 169, 169, 1);
+            transform: rotateZ(0deg) translateY(0px);
+            transition-duration: 0.3s;
+            transition-timing-function: cubic-bezier(.59, 1.39, .37, 1.01);
+        }
+
+        .expanded {
+            transform: rotateZ(180deg) translateY(2px);
+        }
+
+        .label {
+            line-height: normal;
+        }
+
+        .label {
+            font-weight: 700;
+
+            &:hover {
+                font-weight: 400;
+            }
+        }
+    }
+
+    ul {
+        width: 100%;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        background-color: var(--bg-white);
+        position: absolute;
+        left: -2px;
+        top: 42px;
+        z-index: 1;
+        border-radius: 4px;
+        box-shadow: 0px 0px 6px 0px rgba(148, 181, 225, 0.35);
+    }
+
+    li {
+        padding: 10px 8px 10px 16px;
+
+        &:hover {
+            background: var(--bg-l-blue);
+            font-weight: 400;
+        }
+    }
+
+    .current {
+        background-image: url("../imgs/choose-yes.svg");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 8px) center;
+        font-weight: 700;
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    .visible {
+        visibility: visible;
+    }
 }
 
 .contacts_table {
