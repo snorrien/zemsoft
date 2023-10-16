@@ -8,11 +8,10 @@ export default {
         Message
     },
     data() {
-        console.log(this.contactName)
         const contact = this.$store.state.contacts.find(c => c.name === this.contactName);
 
         return {
-            id: contact ? contact.id : '',
+            id: contact ? contact.id : null,
             name: contact ? contact.name : '',
             email: contact ? contact.email : '',
             phone: contact ? contact.phone : '',
@@ -32,11 +31,11 @@ export default {
     methods: {
         ...mapActions([
             'addContactAsync',
-            'updateContactAsync'
+            'updateContactAsync',
+            'removeContactAsync'
         ]),
-        async addContact(e) {
+        async addContact() {
             const inputsAreValid = this.validateInputs();
-            console.log(inputsAreValid)
             if (!inputsAreValid) {
                 return;
             }
@@ -58,16 +57,21 @@ export default {
                     group: this.group,
                     date: this.getFormattedDate()
                 })
+                this.$router.push('/');
             }
+        },
+        removeContact() {   
+            this.removeContactAsync(this.id);
+            this.$router.push('/');
         },
         back() {
             this.$router.push('/');
         },
         getFormattedDate() {
             const date = new Date();
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
             return `${day}.${month}.${year}`
         },
         validateInputs() {
@@ -113,9 +117,7 @@ export default {
             }
         },
         validateGroup() {
-            const value = this.group;
-            if (value === '') {
-                console.log('error-group')
+            if (this.isInitialValueDropdown) {
                 this.groupError = 'Поле не можеть быть пустым'
             }else {
                 this.groupError = null
@@ -126,6 +128,7 @@ export default {
             this.visible = !this.visible;
         },
         selectItem(option) {
+            this.group = option;
             this.valueDropdown = option;
             this.isInitialValueDropdown = false;
         }
@@ -175,10 +178,9 @@ export default {
             <p class="container_label">Категория</p>
             <div class="container_input">
                 
-                <div class="input selectGroup" :data-value="valueDropdown" :data-list="list">
-                    <img :class="{ active: groupError === null }" src="../imgs/invalid-icon.svg" />
+                <div class="input selectGroup" @click="toggleDropdown()" :data-value="valueDropdown" :data-list="list">
                     <span class="error-text" v-if="groupError">{{ groupError }}</span>
-                    <div class="selector" @click="toggleDropdown()">
+                    <div class="selector" >
                         <div class="label" :class="{ 'gray-text': isInitialValueDropdown }">
                             {{ valueDropdown }}
                         </div>
@@ -196,7 +198,7 @@ export default {
             </div>
         </div>
 
-        <div v-if="date" class="container_row">
+        <div v-if="id" class="container_row">
             <p class="container_label">Создан</p>
             <p>{{ this.date }}</p>
         </div>
@@ -209,7 +211,7 @@ export default {
                     <img v-if="this.$store.state.contactSaving" src="../imgs/loader.svg" />
                     СОХРАНИТЬ
                 </button>
-                <button class="btn-remove">
+                <button @click="removeContact" v-if="id" class="btn-remove">
                     <img src="../imgs/bascet.svg" />
                     Удалить контакт
                 </button>

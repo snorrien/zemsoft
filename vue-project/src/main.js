@@ -35,7 +35,13 @@ const store = createStore({
         ...state.contacts.filter(element => element.id !== payload.id),
         payload
       ]
+    },
+    removeContact(state, payload) {
+      state.contacts = [
+        ...state.contacts.filter(element => element.id !== payload)
+      ]
     }
+
   },
   actions: {
     addContactAsync({ commit }, payload) {
@@ -52,6 +58,10 @@ const store = createStore({
         commit('contactSaved')
       }, 2000)
     },
+    removeContactAsync({ commit }, payload) {
+      commit('removeContact', payload)
+    },
+
   }
 })
 

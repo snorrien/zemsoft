@@ -3,10 +3,13 @@ import { mapActions } from 'vuex'
 
 export default {
     data() {
+        const initialContacts = this.$store.state.contacts.sort(c => c.date)
         return {
             valueDropdown: 'ВСЕ',
             list: ["ВСЕ", "Родственники", "Коллеги"],
             visible: false,
+            contacts: [ ...initialContacts ],
+            initialContacts: [ ...initialContacts ],
         }
     },
     methods: {
@@ -21,6 +24,11 @@ export default {
         },
         selectItem(option) {
             this.valueDropdown = option;
+            if (option === 'ВСЕ') {
+                this.contacts = this.initialContacts;
+            } else {
+                this.contacts = this.initialContacts.filter(c => c.group === option);
+            }
         }
     },
 }
@@ -35,9 +43,9 @@ export default {
     <div class="navigate">
         <div class="navigate_container">
 
-            <div class="filter">
+            <div class="filter" @click="toggleDropdown()">
                 <div class="input selectFilter" :data-value="valueDropdown" :data-list="list">
-                    <div class="selector" @click="toggleDropdown()">
+                    <div class="selector">
                         <div class="label">
                             {{ valueDropdown }}
                         </div>
@@ -67,7 +75,7 @@ export default {
             <div>E-MAIL</div>
             <div class="col-data">СОЗДАН</div>
         </div>
-        <div class="contacts_row grid" v-for="contact in this.$store.state.contacts" @click="editContact(contact)">
+        <div class="contacts_row grid" v-for="contact in this.contacts" @click="editContact(contact)">
             <div>
                 <div class="contact_name">
                     <div class="contact_letter">{{ contact.name?.charAt(0)?.toUpperCase() ?? "-" }}</div>
@@ -140,7 +148,7 @@ export default {
     font-size: 12px;
 }
 
-.filter{
+.filter {
     width: 235px;
 }
 
