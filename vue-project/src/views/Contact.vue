@@ -69,7 +69,7 @@ export default {
             const date = new Date();
             const day = date.getDate();
             const month = date.getMonth() + 1;
-            const year = date.getFullYear();
+            const year = date.getFullYear().toString().slice(-2);;
             return `${day}.${month}.${year}`
         },
         validateInputs() {
@@ -105,7 +105,7 @@ export default {
             <p> Добавить контакт</p>
         </div>
         <div class="contact_title__name" v-if="id">
-            <div class="title__letter">{{ this.name?.charAt(0)?.toUpperCase()}}</div>
+            <div class="title__letter">{{ this.name?.charAt(0)?.toUpperCase() }}</div>
             <p>{{ this.name }}</p>
         </div>
         <div @click="back" class="btn-close">
@@ -114,8 +114,11 @@ export default {
     </div>
 
     <div class="contact_container">
-        <div class="container_title">
+        <div class="container_title" v-if="id">
             Контакт
+        </div>
+        <div class="container_title" v-if="!id">
+            Новый контакт
         </div>
         <div class="container_row">
             <p class="container_label">Имя</p>
@@ -167,14 +170,12 @@ export default {
                 </div>
             </div>
         </div>
-
         <div v-if="id" class="container_row">
             <p class="container_label">Создан</p>
-            <p>{{ this.date }}</p>
+            <p class="date_label">{{ this.date }}</p>
         </div>
-
-        <div class="container_row">
-            <div></div>
+        <div class="container_row__buttons">
+            <div class="space"></div>
             <div class="container_buttons">
                 <button @click="addContact" class="btn-save">
                     <img v-if="!this.$store.state.contactSaving" src="../imgs/save.svg" />
@@ -243,7 +244,7 @@ export default {
     margin-bottom: 24px;
 }
 
-.title__letter{
+.title__letter {
     text-transform: uppercase;
     background-color: var(--bg-yellow);
     border-radius: 50%;
@@ -265,12 +266,24 @@ export default {
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 17px;
+}
+.container_row__buttons {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+    margin-top: 0;
+    padding-top: 1rem;
 }
 
 .container_label {
     justify-content: center;
     font-weight: 700;
+    margin-top: 10px;
+}
+
+.date_label{
+    margin-top: 10px;
 }
 
 .container_input {
@@ -295,13 +308,13 @@ export default {
 
 .input {
     width: 100%;
-    padding: .5rem 1.5rem .5rem .5rem;
+    padding: 8px 1.5rem 8px 8px;
     border-radius: 4px;
     border: 1px solid #DDD;
     background-color: var(--bg-white);
     outline: none;
     caret-color: var(--blue);
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Proxima Nova', sans-serif;
 
     &:hover,
     &:active {
@@ -385,6 +398,10 @@ export default {
     gap: 24px;
 }
 
+.space {
+    display: block
+}
+
 .btn-save {
     display: flex;
     padding: 12px 16px;
@@ -450,18 +467,73 @@ export default {
     left: 2rem;
 }
 
-@media (max-width: 994px) {
-   
-}
+@media (max-width: 770px) {
+    .container_title {
+        font-size: 24px;
+    }
 
+    .container_label,
+    .input,
+    .container_row p,
+    .selectGroup li,
+    .selector .label,
+    .btn-save,
+    .btn-remove {
+        font-size: 12px;
+    }
+
+    .btn-save {
+        width: 124px;
+        padding: 10px 8px;
+    }
+
+    .contact_title__name p {
+        font-size: 14px;
+    }
+
+    .title__letter {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+}
 
 @media (max-width: 578px) {
     .message_container {
         bottom: auto;
         left: 40%;
-        top:70px;
-        
+        top: 70px;
+    }
+
+    .contact_container {
+        padding: 2rem 3rem 3rem 3rem;
+        margin-left: 12px;
+        margin-right: 12px;
     }
 }
 
+
+@media screen and (max-width: 378px) {
+    .message_container {
+        bottom: auto;
+        left: 20%;
+        top: 70px;
+    }
+
+    .contact_container {
+        padding: 32px 20px 48px 20px;
+    }
+
+    .space {
+        display: none;
+    }
+
+.container_row__buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-bottom: 1rem;
+        justify-items: center;
+    }
+    
+}
 </style>

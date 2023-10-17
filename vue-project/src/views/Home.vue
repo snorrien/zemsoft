@@ -63,7 +63,7 @@ export default {
 
             <button class="btn-add" @click="createContact">
                 +
-                <p class="text">Добавить контакт</p>
+                <p class="text">Добавить <span>контакт</span></p>
             </button>
         </div>
     </div>
@@ -71,8 +71,11 @@ export default {
     <div class="contacts_table">
         <div class="contacts_title grid">
             <div>КОНТАКТ</div>
-            <div>ТЕЛЕФОН</div>
-            <div>E-MAIL</div>
+            <div class="sm_grid sm_grid__titles">
+                <div>ТЕЛЕФОН</div>
+                <p class="split">&nbsp/&nbsp</p>
+                <div>E-MAIL</div>
+            </div>
             <div class="col-date">СОЗДАН</div>
         </div>
         <div class="cont">
@@ -83,8 +86,10 @@ export default {
                         <p>{{ contact.name }}</p>
                     </div>
                 </div>
-                <div class="contact_phone">{{ contact.phone }}</div>
-                <div class="contact_email">{{ contact.email }}</div>
+                <div class="sm_grid">
+                    <div class="contact_phone">{{ contact.phone }}</div>
+                    <div class="contact_email">{{ contact.email }}</div>
+                </div>
                 <div class="col-date">{{ contact.date }}</div>
             </div>
         </div>
@@ -107,7 +112,7 @@ export default {
 
 .logo {
     margin-left: 3rem;
-    margin-left: 1rem;
+    margin-right: 1rem;
     caret-color: transparent;
 }
 
@@ -145,9 +150,10 @@ export default {
     }
 }
 
-.btn-add p {
+.btn-add p, .btn-add span {
     font-weight: 700;
     font-size: 12px;
+    display: inline;
 }
 
 .filter {
@@ -240,8 +246,18 @@ export default {
 
 .grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 1fr;
+    grid-template-columns: 2.2fr 2.5fr 1fr;
     align-items: center;
+}
+
+.sm_grid {
+    display: grid;
+    grid-template-columns: 200px 208px;
+    align-items: center;
+}
+
+.split{
+    display: none;
 }
 
 .contacts_row {
@@ -268,7 +284,6 @@ export default {
     display: flex;
     justify-content: center;
     text-align: center;
-
 }
 
 .contact_name {
@@ -299,6 +314,10 @@ export default {
     .title {
         height: 40px
     }
+
+    .contact_name, .col-date {
+        font-size: 12px;
+    }
 }
 
 @media screen and (max-width: 578px) {
@@ -309,8 +328,36 @@ export default {
         margin-right: 12px;
     }
 
+    .sm_grid {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
 
- 
+    .sm_grid__titles {
+        display: flex;
+    }
 
+    .split{
+        display: block;
+    }
+}
+
+
+@media screen and (max-width: 378px) {
+    .title {
+        height: 40px
+    }
+    .col-date {
+        font-size: 10px;
+    }
+    .btn-add span{
+        display: none;
+    }
+    .filter {
+        width: 219px;
+    }
+    .contact_letter{
+        display: none;
+    }
 }
 </style>
