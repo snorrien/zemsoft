@@ -1,30 +1,15 @@
-# vue-project
+# Contact book
 
-This template should help get you started developing with Vue 3 in Vite.
+Contact book with a breakdown of contacts into categories and the ability to add new contacts using a form.
 https://zemsoft-contacts.netlify.app
 
-## Recommended IDE Setup
+# Contact list
+This is the main page of the application, which shows all saved contacts. Above the list is a selector with a filter. The filter contains three parameters – “All” / “Relatives” / “Colleagues”. All contacts, sorted by date added.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+# Contact
+The contact card contains the Name, Email, Phone, Dropdown, the date the contact was created and the “Delete” button. By clicking on the line of any contact, a contact card opens. The contact can be edited.
 
-## Customize configuration
+# Fake Api
+After successful form validation, the data from the form is sent to the fake API (using setTimeout to simulate sending data). While the data is being “sent”, a loading indicator (loader) is displayed.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
