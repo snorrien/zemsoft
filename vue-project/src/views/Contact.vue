@@ -85,7 +85,6 @@ export default {
             }
         },
 
-
         toggleDropdown() {
             this.visible = !this.visible;
         },
