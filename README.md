@@ -11,5 +11,3 @@ The contact card contains the Name, Email, Phone, Dropdown, the date the contact
 
 # Fake Api
 After successful form validation, the data from the form is sent to the fake API (using setTimeout to simulate sending data). While the data is being “sent”, a loading indicator (loader) is displayed.
-
-
